@@ -1,5 +1,4 @@
 package com.CCC;
-
 import java.util.Scanner;
 
 public class S3 {
@@ -12,6 +11,7 @@ public class S3 {
     }
     private static int[] controller(String [][] box, int[][] result){
         int counter = 0;
+        int infinity = -1000000001;
         int max = -1000000001;
         int[] counterAndMax = new int[2];
         for(int i = 0; i < box.length; i++){
@@ -22,6 +22,8 @@ public class S3 {
                        max = result[i][j];
                    }
                    counter++;
+               }else{
+                   result[i][j] = infinity;
                }
             }
         }
@@ -52,7 +54,48 @@ public class S3 {
                 }
             }
         }
-
+        resultMatrix(result);
+    }
+    private static void resultMatrix(int[][] result){
+        int inf = -1000000001;
+        int[] diffOfRow = new int[6];
+        int[] diffOfCol = new int[6];
+        for(int i = 0; i < result.length; i++){
+            for(int j = 0; j < result.length; j++){
+                if(result[i][j] != inf){
+                    if(result[i][0] != inf && j != 0){
+                        diffOfCol[i] = (result[i][j] - result[i][0])/(j - 0);
+                        result[i][1] = result[i][0] + diffOfCol[i];
+                        result[i][2] = result[i][0] + 2 * diffOfCol[i];
+                    }
+                    else if(result[i][1] != inf && j != 1){
+                        diffOfCol[i] = (result[i][j] - result[i][1])/(j - 1);
+                        result[i][0] = result[i][1] - diffOfCol[i];
+                        result[i][2] = result[i][1] + diffOfCol[i];
+                    }
+                    else if(result[i][2] != inf && j != 2){
+                        diffOfCol[i] = (result[i][j] - result[i][2])/(j - 2);
+                        result[i][1] = result[i][2] - diffOfCol[i];
+                        result[i][0] = result[i][2] - 2 * diffOfCol[i];
+                    }
+                    if(result[0][j] != inf && i != 0){
+                        diffOfRow[j] = (result[i][j] - result[0][j])/(i - 0);
+                        result[1][j] = result[0][j] + diffOfRow[j];
+                        result[2][j] = result[0][j] + 2 * diffOfRow[j];
+                    }
+                    else if(result[1][j] != inf && i != 1){
+                        diffOfRow[j] = (result[i][j] - result[1][j])/(i - 1);
+                        result[0][j] = result[1][j] - diffOfRow[j];
+                        result[2][j] = result[1][j] + diffOfRow[j];
+                    }
+                    else if(result[2][j] != inf && i != 2){
+                        diffOfRow[j] = (result[i][j] - result[2][j])/(i - 2);
+                        result[0][j] = result[2][j] - 2 * diffOfRow[j];
+                        result[1][j] = result[2][j] - diffOfRow[j];
+                    }
+                }
+            }
+        }
     }
     private static int numOfX(String[] array){
         int counter = 0;
@@ -71,6 +114,12 @@ public class S3 {
         box[0] = s.nextLine().split(" ");
         box[1] = s.nextLine().split(" ");
         box[2] = s.nextLine().split(" ");
-
+        solution(box, result);
+        for(int m = 0; m < result.length; m++){
+            for(int n = 0; n < result.length; n++){
+                System.out.print(result[m][n] + " ");
+            }
+            System.out.println();
+        }
     }
 }

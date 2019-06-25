@@ -248,7 +248,138 @@ public class S2 {
     }
 }
 ```
+## Senior 3
+#### I believe this is the most challenageable problems in this test.
+##### first, to reduce the dimensional, we need to divide the problem into subfunctions : the "X" in rare and the "X" is enough.
+- when X is rare, we should fit them at least an row or a column.
+- when X is enough, we need to figure what is the difference among different rows and columns.
+##### In this problem, I used the arrays to restore difference of rows and columns. And using String[][] box to restore the original input and using int[][] result to calculate the answer with the same volume. Then figure out the difference between rows and columns. It could be simplified in forms.
+```java
+import java.util.Scanner;
 
+public class S3 {
+    private static String[] getColumn(String[][] array, int index){
+        String[] column = new String[array.length];
+        for(int i = 0; i < array.length; i++){
+            column[i] = array[i][index];
+        }
+        return column;
+    }
+    private static int[] controller(String [][] box, int[][] result){
+        int counter = 0;
+        int infinity = -1000000001;
+        int max = -1000000001;
+        int[] counterAndMax = new int[2];
+        for(int i = 0; i < box.length; i++){
+            for(int j = 0; j < box.length; j++){
+               if(!box[i][j].equals("X")){
+                   result[i][j] = Integer.parseInt(box[i][j]);
+                   if(result[i][j] > max){
+                       max = result[i][j];
+                   }
+                   counter++;
+               }else{
+                   result[i][j] = infinity;
+               }
+            }
+        }
+        counterAndMax[0] = counter;
+        counterAndMax[1] = max;
+        return counterAndMax;
+    }
+    private static void solution(String [][] box, int[][] result){
+        int num = controller(box, result)[0];
+        int max = controller(box, result)[1];
+        if(num == 0){
+            return;
+        }
+        else if(num <= 3){
+            for(int i = 0; i < result.length; i++){
+                for(int j = 0 ; j < result.length; j++){
+                    if(result[i][j] == max){
+                        if(numOfX(box[i]) == 2 ){
+                           result[i][0] = max;
+                           result[i][1] = max;
+                           result[i][2] = max;
+                        }else if(numOfX(getColumn(box,j)) == 2){
+                           result[0][j] = max;
+                           result[1][j] = max;
+                           result[2][j] = max;
+                        }
+                    }
+                }
+            }
+        }
+        resultMatrix(result);
+    }
+    private static void resultMatrix(int[][] result){
+        int inf = -1000000001;
+        int[] diffOfRow = new int[6];
+        int[] diffOfCol = new int[6];
+        for(int i = 0; i < result.length; i++){
+            for(int j = 0; j < result.length; j++){
+                if(result[i][j] != inf){
+                    if(result[i][0] != inf && j != 0){
+                        diffOfCol[i] = (result[i][j] - result[i][0])/(j - 0);
+                        result[i][1] = result[i][0] + diffOfCol[i];
+                        result[i][2] = result[i][0] + 2 * diffOfCol[i];
+                    }
+                    else if(result[i][1] != inf && j != 1){
+                        diffOfCol[i] = (result[i][j] - result[i][1])/(j - 1);
+                        result[i][0] = result[i][1] - diffOfCol[i];
+                        result[i][2] = result[i][1] + diffOfCol[i];
+                    }
+                    else if(result[i][2] != inf && j != 2){
+                        diffOfCol[i] = (result[i][j] - result[i][2])/(j - 2);
+                        result[i][1] = result[i][2] - diffOfCol[i];
+                        result[i][0] = result[i][2] - 2 * diffOfCol[i];
+                    }
+                    if(result[0][j] != inf && i != 0){
+                        diffOfRow[j] = (result[i][j] - result[0][j])/(i - 0);
+                        result[1][j] = result[0][j] + diffOfRow[j];
+                        result[2][j] = result[0][j] + 2 * diffOfRow[j];
+                    }
+                    else if(result[1][j] != inf && i != 1){
+                        diffOfRow[j] = (result[i][j] - result[1][j])/(i - 1);
+                        result[0][j] = result[1][j] - diffOfRow[j];
+                        result[2][j] = result[1][j] + diffOfRow[j];
+                    }
+                    else if(result[2][j] != inf && i != 2){
+                        diffOfRow[j] = (result[i][j] - result[2][j])/(i - 2);
+                        result[0][j] = result[2][j] - 2 * diffOfRow[j];
+                        result[1][j] = result[2][j] - diffOfRow[j];
+                    }
+                }
+            }
+        }
+    }
+    private static int numOfX(String[] array){
+        int counter = 0;
+        for(int i = 0; i < array.length; i++){
+            if(array[i].equals("X")){
+                counter++;
+            }
+        }
+        return counter;
+    }
+    public static void main(String[] args){
+        System.out.println("Input");
+        Scanner s = new Scanner(System.in);
+        String[][] box = new String[3][3];
+        int[][] result = new int[3][3];
+        box[0] = s.nextLine().split(" ");
+        box[1] = s.nextLine().split(" ");
+        box[2] = s.nextLine().split(" ");
+        solution(box, result);
+        for(int m = 0; m < result.length; m++){
+            for(int n = 0; n < result.length; n++){
+                System.out.print(result[m][n] + " ");
+            }
+            System.out.println();
+        }
+    }
+}
+```
 ## Senior 4
 #### The idea of this problem is not hard to find. A mistake has been realized that only linkedList had implemented the Queue interface (not  ArrayList), so using linkedList is an easier way unless you would like to override Queue interface yourself. Another point is to manipulate the queue based on the same reference in each situation, thus, we need to write `queue.offer()` frist when the situation has changed. Otherwise, the NullPointerException will show up.
 ```java
